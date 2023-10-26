@@ -10,7 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 class CurrencyRate
 {
     #[ORM\Id]
-    #[ORM\Column(length: 10, nullable: true)]
+    #[ORM\GeneratedValue(strategy: "NONE")]
+    #[ORM\Column(type: "string", length: 50)]
     private ?string $currency_id = null;
 
     #[ORM\Id]

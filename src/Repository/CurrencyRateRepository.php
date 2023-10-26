@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\CurrencyRate;
+use Carbon\Carbon;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,33 +18,41 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CurrencyRateRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private CurrencyRepository $currencyRepository,
+    )
     {
         parent::__construct($registry, CurrencyRate::class);
     }
 
-//    /**
-//     * @return CurrencyRate[] Returns an array of CurrencyRate objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByIdDateRate($id, $date, $rate)
+    {
+        return $this->createQueryBuilder('cr')
+            ->andWhere('cr.currency_id = :id')
+            ->andWhere('cr.date = :date')
+            ->andWhere('cr.rate = :rate')
+            ->setParameter('id', $id)
+            ->setParameter('date', $date)
+            ->setParameter('rate', $rate)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    
+    public function create($id, $date, $rate): void
+    {
+        $currencyRate = new CurrencyRate();
+        $currency = $this->currencyRepository->find($id);
+        $currencyRate->setCurrency($currency);
+        $currencyRate->setCurrencyId($id);
+        $dateObject = Carbon::createFromFormat('Y-m-d', $date);
+        $currencyRate->setDate($dateObject);
+        $currencyRate->setRate(str_replace(',', '.', $rate));
 
-//    public function findOneBySomeField($value): ?CurrencyRate
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        $this->_em->persist($currencyRate);
+        $this->_em->flush();;
+    }
 }

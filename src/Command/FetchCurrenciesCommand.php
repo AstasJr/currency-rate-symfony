@@ -7,21 +7,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use App\Message\FetchAndStoreCurrencies;
+use App\Message\FetchCurrenciesMessage;
 
 class FetchCurrenciesCommand extends Command
 {
     protected static $defaultName = 'fetch:currencies';
 
-    private $bus;
-    private $logger;
-
-    public function __construct(MessageBusInterface $bus, LoggerInterface $logger)
+    public function __construct(private readonly MessageBusInterface $bus)
     {
         parent::__construct();
-
-        $this->bus = $bus;
-        $this->logger = $logger;
     }
 
     protected function configure()
@@ -33,7 +27,7 @@ class FetchCurrenciesCommand extends Command
     {
         $output->writeln('Start fetching currencies from cbr.ru');
 
-        $this->bus->dispatch(new FetchAndStoreCurrencies());
+        $this->bus->dispatch(new FetchCurrenciesMessage());
 
         $output->writeln('Finish fetching currencies from cbr.ru');
 

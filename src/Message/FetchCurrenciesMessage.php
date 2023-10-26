@@ -2,7 +2,7 @@
 
 namespace App\Message;
 
-class FetchAndStoreCurrencies
+class FetchCurrenciesMessage
 {
 
 }

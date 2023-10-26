@@ -10,7 +10,7 @@ framework:
             sync: 'sync://'
 
         routing:
-            'App\Message\FetchAndStoreCurrenciesMessage': sync
+            'App\Message\FetchCurrenciesMessage': sync
             'App\Message\FetchCurrencyRateMessage': sync
 
 # when@test:

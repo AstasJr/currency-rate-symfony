@@ -1,0 +1,5 @@
+### Root
+GET localhost:5080/
+
+### CurrencyController
+GET localhost:5080/currency

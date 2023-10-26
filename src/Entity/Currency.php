@@ -18,7 +18,7 @@ class Currency
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
